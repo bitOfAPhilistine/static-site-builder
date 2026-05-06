@@ -1,12 +1,15 @@
 import os
 import shutil
+import sys
 
 from textnode import *
 from htmlnode import *
 
 
-PUBLIC_DIR = "public"
+PUBLIC_DIR = "docs"
 STATIC_DIR = "static"
+BASEPATH = sys.argv[1] if len(sys.argv) > 1 else '/'
+
 
 def copy_dir(src, dst):
     print(f"Scanning {src}...")
@@ -39,7 +42,7 @@ def generate_page(src, dst, template_path="template.html"):
     
     title = extract_title(md)
     content = md_to_htmlnode(md).to_html()
-    html = template.replace("{{ Title }}", title).replace("{{ Content }}", content)
+    html = template.replace("{{ Title }}", title).replace("{{ Content }}", content).replace("href=\"/", f"href={BASEPATH}").replace("src=\"/", f"src={BASEPATH}")
 
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     print(f"Generating html file: {dst}...")
@@ -52,9 +55,9 @@ def generate_pages_recursive(src, dst, template_path="template.html"):
     for item in contents:
         item_path = f"{src}/{item}"
         if os.path.isfile(item_path):
-            generate_page(item_path, item_path.replace(src, dst).replace(".md", ".html"))
+            generate_page(item_path, item_path.replace(src, dst).replace(".md", ".html"), template_path)
         else:
-            generate_pages_recursive(item_path, item_path.replace(src, dst).replace(".md", ".html"))
+            generate_pages_recursive(item_path, item_path.replace(src, dst).replace(".md", ".html"), template_path)
 
 def main():
     if os.path.exists(PUBLIC_DIR):
