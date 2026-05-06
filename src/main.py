@@ -42,7 +42,7 @@ def generate_page(src, dst, template_path="template.html"):
     
     title = extract_title(md)
     content = md_to_htmlnode(md).to_html()
-    html = template.replace("{{ Title }}", title).replace("{{ Content }}", content).replace("href=/", f"href={BASEPATH}").replace("src=/", f"src={BASEPATH}")
+    html = template.replace("{{ Title }}", title).replace("{{ Content }}", content).replace("href=\"/", f"href=\"{BASEPATH}").replace("src=\"/", f"src=\"{BASEPATH}")
 
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     print(f"Generating html file: {dst}...")
